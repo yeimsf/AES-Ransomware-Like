@@ -9,7 +9,7 @@ echo -n "Would You Like To Encrypt Or Decrypt (1/2)>"
 read mode
 if [ $mode = '1' ]
 then
-    files=`find . -type f`
+    files=`find . -path ./.git -prune -false -o -type f`
     files=($(echo $files | tr '\b' '\n'))
     echo $files
     numOptions=${#files[@]}
@@ -27,7 +27,7 @@ then
     done
 elif [ $mode = '2' ]
 then
-    files=`find -type f`
+    files=`find . -path ./.git -prune -false -o -type f`
     files=($(echo $files | tr '\b' '\n'))
     numOptions=${#files[@]}
     echo $numOptions
