@@ -58,7 +58,7 @@ def main():
         encrypted = encrypt(msg, password)
         print(encrypted)
     elif encmode == "2":
-        encrypted = ast.literal_eval(msg)
+        encrypted = eval(msg)
         decrypted = decrypt(encrypted, password)
         print(bytes.decode(decrypted))
     # encrypted = ast.literal_eval(msg)
