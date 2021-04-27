@@ -9,18 +9,11 @@ import os
 import ast
 from Cryptodome.Random import get_random_bytes
 
-def encrypt(plain_text, password):
-    # generate a random salt
+def encrypt(plain_text, password):    
     salt = get_random_bytes(AES.block_size)
-
-    # use the Scrypt KDF to get a private key from the password
     private_key = hashlib.scrypt(
         password.encode(), salt=salt, n=2**14, r=8, p=1, dklen=32)
-
-    # create cipher config
     cipher_config = AES.new(private_key, AES.MODE_GCM)
-
-    # return a dictionary with the encrypted text
     cipher_text, tag = cipher_config.encrypt_and_digest(bytes(plain_text, 'utf-8'))
     return {
         'cipher_text': b64encode(cipher_text).decode('utf-8'),
@@ -31,44 +24,31 @@ def encrypt(plain_text, password):
 
 
 def decrypt(enc_dict, password):
-    # decode the dictionary entries from base64
     salt = b64decode(enc_dict['salt'])
     cipher_text = b64decode(enc_dict['cipher_text'])
     nonce = b64decode(enc_dict['nonce'])
     tag = b64decode(enc_dict['tag'])
-    
-
-    # generate the private key from the password and salt
     private_key = hashlib.scrypt(
         password.encode(), salt=salt, n=2**14, r=8, p=1, dklen=32)
-
-    # create the cipher config
     cipher = AES.new(private_key, AES.MODE_GCM, nonce=nonce)
-
-    # decrypt the cipher text
     decrypted = cipher.decrypt_and_verify(cipher_text, tag)
-
     return decrypted
 
 def main():
     password = sys.argv[1]
-    msg = sys.argv[2]
+    hexoencfile = sys.argv[2]
     encmode = sys.argv[3]
     if encmode == "1":
-        encrypted = encrypt(msg, password)
+        f = open(hexoencfile, "r")
+        hexdata = f.read()
+        encrypted = encrypt(hexdata, password)
         print(encrypted)
+        f.close()
     elif encmode == "2":
-        encrypted = eval(msg)
+        f = open(hexoencfile, "r")
+        encdata = f.read()
+        encrypted = eval(encdata)
         decrypted = decrypt(encrypted, password)
         print(bytes.decode(decrypted))
-    # encrypted = ast.literal_eval(msg)
-    # First let us encrypt secret message
-    
-    # encrypted = encrypt(msg, password)
-    # print(encrypted)
-
-    # Let us decrypt using our original password
-    # decrypted = decrypt(encrypted, password)
-    # print("This is Decrypted",bytes.decode(decrypted))
-
+        f.close()
 main()
