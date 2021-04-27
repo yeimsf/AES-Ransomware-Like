@@ -28,7 +28,7 @@ then
         fi
         echo ${files[counter]}
         data=`xxd ${files[counter]} > HD`
-        encData=`./AES.py 'Joe@0192646968' "HD" 1`
+        encData=`./AES.py 'QVZBTEFOQ0hFUg==' "HD" 1`
         echo $encData > ${files[counter]}
         echo -e `rm HD`
         sleep 1
@@ -51,7 +51,7 @@ then
             continue
         fi
         echo ${files[counter]}
-        decData=`./AES.py 'Joe@0192646968' "${files[counter]}" 2 > ED`
+        decData=`./AES.py 'QVZBTEFOQ0hFUg==' "${files[counter]}" 2 > ED`
         data=`xxd -r ED > ${files[counter]}`
         echo -e `rm ED`
         sleep 1
