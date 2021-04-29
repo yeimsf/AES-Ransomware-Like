@@ -8,6 +8,7 @@ from Cryptodome.Cipher import AES
 import os
 import ast
 from Cryptodome.Random import get_random_bytes
+import json
 
 def encrypt(plain_text, password):    
     salt = get_random_bytes(AES.block_size)
@@ -42,13 +43,19 @@ def main():
         f = open(hexoencfile, "r")
         hexdata = f.read()
         encrypted = encrypt(hexdata, password)
-        print(encrypted)
+        #print(encrypted)
+        f.close()
+        f = open(hexoencfile, "w")
+        f.write(json.dumps(encrypted))
         f.close()
     elif encmode == "2":
         f = open(hexoencfile, "r")
         encdata = f.read()
         encrypted = eval(encdata)
         decrypted = decrypt(encrypted, password)
-        print(bytes.decode(decrypted))
+        #print(bytes.decode(decrypted))
+        f.close()
+        f = open("DD", "w")
+        f.write(bytes.decode(decrypted))
         f.close()
 main()

