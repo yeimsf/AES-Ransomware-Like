@@ -10,6 +10,8 @@ import ast
 from Cryptodome.Random import get_random_bytes
 import json
 
+# Encrypting Function Takes The Data Collected From Files Into String Variable And Generates A Hash Using The Password Provided By The Attacker For Better Encryption
+
 def encrypt(plain_text, password):    
     salt = get_random_bytes(AES.block_size)
     private_key = hashlib.scrypt(
@@ -23,6 +25,7 @@ def encrypt(plain_text, password):
         'tag': b64encode(tag).decode('utf-8')
     }
 
+# Decrypting Function Takes The AES Dict Encryption From File And Decrypts With The Same Password Used In Encryption For Better Anti-Security
 
 def decrypt(enc_dict, password):
     salt = b64decode(enc_dict['salt'])
@@ -43,7 +46,6 @@ def main():
         f = open(hexoencfile, "r")
         hexdata = f.read()
         encrypted = encrypt(hexdata, password)
-        #print(encrypted)
         f.close()
         f = open(hexoencfile, "w")
         f.write(json.dumps(encrypted))
@@ -53,7 +55,6 @@ def main():
         encdata = f.read()
         encrypted = eval(encdata)
         decrypted = decrypt(encrypted, password)
-        #print(bytes.decode(decrypted))
         f.close()
         f = open("DD", "w")
         f.write(bytes.decode(decrypted))
